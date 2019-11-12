@@ -364,7 +364,7 @@ class USFS(object):
         #self.setFloatParam(0x34, float(4.0))               # set param 52 mag merging rate (0.7 is default)
         #self.setFloatParam(0x35, float(0.3))               # set param 53 accel merging rate (0.6 is default)
 
-        self.writeRegister(USFS_AlgorithmControl, 0x02)     # diagnostic - reports unscaled sensor data
+        #self.writeRegister(USFS_AlgorithmControl, 0x02)     # diagnostic - reports unscaled sensor data
 
         # choose interrupt events: gyros updated (0x20), sentral error (0x02), or sentral reset (0x01)
         self.writeRegister(USFS_EnableEvents, 0x23)
@@ -416,6 +416,7 @@ class USFS(object):
             console.addstr(20,0,'Press `2` to save Warm Start parameters.')
             console.addstr(21,0,'Press `3` to reset Warm Start parameters and quit.')
             console.addstr(22,0,'Press `q` to quit.')
+            console.addstr(23,0,'Accelerometer calibration countdown: {:4d}'.format(self.calibrating_accel))
             console.refresh()
 
             try:
@@ -723,7 +724,7 @@ class USFS(object):
         return[int('0x'+val1,0),int('0x'+val2,0),int('0x'+val3,0),int('0x'+val4,0)]
 
     def accelCalUpload(self):
-        cal_num_byte = np.zeros((2,1))
+        cal_num_byte = np.zeros((2,1), dtype=np.uint8)
         if (not ACCEL_CAL or not self.accel_cal_valid):
             cal_num_byte[0] = 0
             cal_num_byte[1] = 0
@@ -731,6 +732,8 @@ class USFS(object):
             # NORTH scale
             big_cal_num = (4096000000/(self.accel_cal[0,0] - self.accel_cal[1,0])) - 1000000
             cal_num = int(big_cal_num)
+            cal_num_byte[0] = cal_num & 0xff
+            cal_num_byte[1] = cal_num >> 8
         self.writeRegister(USFS_GP36, cal_num_byte[0])
         self.writeRegister(USFS_GP37, cal_num_byte[1])
 
@@ -741,6 +744,8 @@ class USFS(object):
             # EAST scale
             big_cal_num = (4096000000/(self.accel_cal[0,1] - self.accel_cal[1,1])) - 1000000
             cal_num = int(big_cal_num)
+            cal_num_byte[0] = cal_num & 0xff
+            cal_num_byte[1] = cal_num >> 8
         self.writeRegister(USFS_GP38, cal_num_byte[0])
         self.writeRegister(USFS_GP39, cal_num_byte[1])
 
@@ -751,6 +756,8 @@ class USFS(object):
             # DOWN scale
             big_cal_num = (4096000000/(self.accel_cal[0,2] - self.accel_cal[1,2])) - 1000000
             cal_num = int(big_cal_num)
+            cal_num_byte[0] = cal_num & 0xff
+            cal_num_byte[1] = cal_num >> 8
         self.writeRegister(USFS_GP40, cal_num_byte[0])
         self.writeRegister(USFS_GP50, cal_num_byte[1])
 
@@ -761,6 +768,8 @@ class USFS(object):
             # NORTH offset
             big_cal_num = (((self.accel_cal[0,0] - 2048) + (self.accel_cal[1,0] + 2048))*100000)/4096;
             cal_num = int(big_cal_num)
+            cal_num_byte[0] = cal_num & 0xff
+            cal_num_byte[1] = cal_num >> 8
         self.writeRegister(USFS_GP51, cal_num_byte[0])
         self.writeRegister(USFS_GP52, cal_num_byte[1])
 
@@ -771,6 +780,8 @@ class USFS(object):
             # EAST offset
             big_cal_num = (((self.accel_cal[0,1] - 2048) + (self.accel_cal[1,1] + 2048))*100000)/4096;
             cal_num = int(big_cal_num)
+            cal_num_byte[0] = cal_num & 0xff
+            cal_num_byte[1] = cal_num >> 8
         self.writeRegister(USFS_GP53, cal_num_byte[0])
         self.writeRegister(USFS_GP54, cal_num_byte[1])
 
@@ -781,6 +792,8 @@ class USFS(object):
             # DOWN offset
             big_cal_num = (((self.accel_cal[0,2] - 2048) + (self.accel_cal[1,2] + 2048))*100000)/4096;
             cal_num = int(big_cal_num)
+            cal_num_byte[0] = cal_num & 0xff
+            cal_num_byte[1] = cal_num >> 8
         self.writeRegister(USFS_GP55, cal_num_byte[0])
         self.writeRegister(USFS_GP56, cal_num_byte[1])
 
