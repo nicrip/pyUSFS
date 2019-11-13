@@ -6,6 +6,7 @@ import time
 import math
 import struct
 import select
+import signal
 import sys
 import curses
 import numpy as np
@@ -181,6 +182,14 @@ def writeByteToBus(bus, address, offset, data_byte):
 def readBytesFromBus(bus, address, offset, count):
     bus.write_byte(address, offset)
     return [bus.read_byte(address) for k in range(count)]
+
+def signal_handler(sig, frame):
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
+        print('Ctrl+C force quit.')
+        sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 
 class USFS(object):
     def __init__(self, bus_num, calibrate=False):
