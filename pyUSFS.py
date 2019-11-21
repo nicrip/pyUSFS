@@ -312,10 +312,12 @@ class USFS(object):
 
         # check that the accel cal values are valid
         self.accel_cal_valid = True
+        max_ceil = 2240
+        min_ceil = 1800
         for i in range(3):
-            if (self.accel_cal[1,i] < -2240 or  self.accel_cal[1,i] > -1800):
+            if (self.accel_cal[1,i] < -max_ceil or  self.accel_cal[1,i] > -min_ceil):
                 self.accel_cal_valid = False
-            if (self.accel_cal[0,i] < 1800 or  self.accel_cal[0,i] > 2240):
+            if (self.accel_cal[0,i] < min_ceil or  self.accel_cal[0,i] > max_ceil):
                 self.accel_cal_valid = False
 
         self.accelCalUpload()
