@@ -14,60 +14,69 @@ import numpy as np
 MAG_DECLINATION = 0.0
 
 # Sensor-specific definitions
-# MPU9250
-MPU9250_GYRO_LPF_3600HZ     =0x07
-MPU9250_GYRO_LPF_250HZ      =0x00
-MPU9250_GYRO_LPF_184HZ      =0x01
-MPU9250_GYRO_LPF_92HZ       =0x02
-MPU9250_GYRO_LPF_41HZ       =0x03
-MPU9250_GYRO_LPF_20HZ       =0x04
-MPU9250_GYRO_LPF_10HZ       =0x05
-MPU9250_GYRO_LPF_5HZ        =0x06
-MPU9250_GYRO_DLPF_CFG       =MPU9250_GYRO_LPF_41HZ
-MPU9250_ACC_LPF_460HZ       =0x00
-MPU9250_ACC_LPF_184HZ       =0x01
-MPU9250_ACC_LPF_92HZ        =0x02
-MPU9250_ACC_LPF_41HZ        =0x03
-MPU9250_ACC_LPF_20HZ        =0x04
-MPU9250_ACC_LPF_10HZ        =0x05
-MPU9250_ACC_LPF_5HZ         =0x06
-MPU9250_ACC_DLPF_CFG        =MPU9250_ACC_LPF_41HZ
-ACC_ODR_1000HZ              =0x64
-ACC_ODR_500HZ               =0x32
-ACC_ODR_200HZ               =0x14
-ACC_ODR_100HZ               =0x0A
-ACC_ODR                     =ACC_ODR_1000HZ
-GYRO_ODR_1000HZ             =0x64
-GYRO_ODR_500HZ              =0x32
-GYRO_ODR_200HZ              =0x14
-GYRO_ODR_100HZ              =0x0A
-GYRO_ODR                    =GYRO_ODR_1000HZ
+# LSM6DSM
+LSM6DSM_GYRO_LPF_167        =0x00
+LSM6DSM_GYRO_LPF_223        =0x01
+LSM6DSM_GYRO_LPF_314        =0x02
+LSM6DSM_GYRO_LPF_655        =0x03
+LSM6DSM_GYRO_DLPF_CFG       =LSM6DSM_GYRO_LPF_167
+LSM6DSM_ACC_LPF_ODR_DIV2    =0x00
+LSM6DSM_ACC_LPF_ODR_DIV4    =0x01
+LSM6DSM_ACC_LPF_ODR_DIV9    =0x02
+LSM6DSM_ACC_LPF_ODR_DIV50   =0x03
+LSM6DSM_ACC_LPF_ODR_DIV100  =0x04
+LSM6DSM_ACC_LPF_ODR_DIV400  =0x05
+LSM6DSM_ACC_DLPF_CFG        =LSM6DSM_ACC_LPF_ODR_DIV400
+ACC_ODR_1660HZ              =0xA6
+ACC_ODR_834HZ               =0x53
+ACC_ODR_416HZ               =0x29
+ACC_ODR_208HZ               =0x14
+ACC_ODR_104HZ               =0x0A
+ACC_ODR_52HZ                =0x05
+ACC_ODR_26HZ                =0x02
+ACC_ODR_12HZ                =0x01
+ACC_ODR                     =ACC_ODR_834HZ
+GYRO_ODR_1660HZ             =0xA6
+GYRO_ODR_834HZ              =0x53
+GYRO_ODR_416HZ              =0x29
+GYRO_ODR_208HZ              =0x14
+GYRO_ODR_104HZ              =0x0A
+GYRO_ODR_52HZ               =0x05
+GYRO_ODR_26HZ               =0x02
+GYRO_ODR_12HZ               =0x01
+GYRO_ODR                    =GYRO_ODR_834HZ
 MAG_ODR_100HZ               =0x64
 MAG_ODR_50HZ                =0x32
 MAG_ODR_20HZ                =0x14
 MAG_ODR_10HZ                =0x0A
 MAG_ODR                     =MAG_ODR_100HZ
-BARO_ODR_83HZ               =0x53
+BARO_ODR_75HZ               =0x48
 BARO_ODR_50HZ               =0x32
 BARO_ODR_25HZ               =0x19
+BARO_ODR_10HZ               =0x0A
+BARO_ODR_1HZ                =0x01
 BARO_ODR                    =BARO_ODR_25HZ
+QUAT_DIV_16HZ               =0x0F
 QUAT_DIV_10HZ               =0x09
+QUAT_DIV_8HZ                =0x07
 QUAT_DIV_5HZ                =0x04
 QUAT_DIV_4HZ                =0x03
 QUAT_DIV_2HZ                =0x01
-QUAT_DIV                    =QUAT_DIV_10HZ
+QUAT_DIV_1HZ                =0x00
+QUAT_DIV                    =QUAT_DIV_8HZ
 ACC_SCALE_2G                =0x02
 ACC_SCALE_4G                =0x04
 ACC_SCALE_8G                =0x08
 ACC_SCALE_16G               =0x10
 ACC_SCALE                   =ACC_SCALE_8G
+GYRO_SCALE_125DPS           =0x7D
 GYRO_SCALE_250DPS           =0xFA
 GYRO_SCALE_500DPS           =0x1F4
 GYRO_SCALE_1000DPS          =0x3E8
 GYRO_SCALE_2000DPS          =0x7D0
 GYRO_SCALE                  =GYRO_SCALE_2000DPS
-MAG_SCALE_1000UT            =0x3E8
-MAG_SCALE                   =MAG_SCALE_1000UT
+MAG_SCALE_4915UT            =0x133
+MAG_SCALE                   =MAG_SCALE_4915UT
 DPS_PER_COUNT               =0.1525878906
 SENTRAL_UT_PER_COUNT        =0.0305176
 G_PER_COUNT                 =0.0004882813
@@ -339,8 +348,8 @@ class USFS(object):
             print('Warm start data NOT loaded.')
 
         # set sensor low-pass filter bandwidth. MUST BE DONE BEFORE SETTING ODR RATES!
-        self.writeRegister(USFS_ACC_LPF_BW, MPU9250_ACC_DLPF_CFG)
-        self.writeRegister(USFS_GYRO_LPF_BW, MPU9250_GYRO_DLPF_CFG)
+        self.writeRegister(USFS_ACC_LPF_BW, LSM6DSM_ACC_DLPF_CFG)
+        self.writeRegister(USFS_GYRO_LPF_BW, LSM6DSM_GYRO_DLPF_CFG)
 
         # set accel/gyro/mag to desired ODR rates
         self.writeRegister(USFS_AccelRate, ACC_ODR)
