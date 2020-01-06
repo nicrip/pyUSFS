@@ -406,6 +406,7 @@ class USFS(object):
         console.nodelay(True)
         input = None
         while True:
+            console.clear()
             loop_start = time.time()
             loop_time = loop_start - prev_loop_start
             prev_loop_start = loop_start
