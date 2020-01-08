@@ -923,5 +923,6 @@ class USFS(object):
         data = [0x8c] + data
         self.USFS.write_i2c_block_data(EEPROM_DATA_ADDRESS, 0x80, data)
 
-usfs = USFS(2, calibrate=True)
-usfs.run()
+if __name__ == "__main__":
+    usfs = USFS(2, calibrate=True)
+    usfs.run()
