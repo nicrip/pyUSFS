@@ -27,6 +27,16 @@ LSM6DSM_ACC_LPF_ODR_DIV50   =0x03
 LSM6DSM_ACC_LPF_ODR_DIV100  =0x04
 LSM6DSM_ACC_LPF_ODR_DIV400  =0x05
 LSM6DSM_ACC_DLPF_CFG        =LSM6DSM_ACC_LPF_ODR_DIV400
+# LIS2MDL
+LIS2MDL_MAG_LPF_ODR_DIV2    =0x00
+LIS2MDL_MAG_LPF_ODR_DIV4    =0x01
+LIS2MDL_MAG_DLPF_ODR_CFG    =LIS2MDL_MAG_LPF_ODR_DIV4
+# LPS22HB
+LPS22HB_BARO_LPF_ODR_DIV2   =0x00
+LPS22HB_BARO_LPF_ODR_DIV9   =0x01
+LPS22HB_BARO_LPF_ODR_DIV20  =0x02
+LPS22HB_BARO_DLPF_ODR_CFG   =LPS22HB_BARO_LPF_ODR_DIV2
+# GENERIC
 ACC_ODR_1660HZ              =0xA6
 ACC_ODR_834HZ               =0x53
 ACC_ODR_416HZ               =0x29
@@ -150,7 +160,8 @@ USFS_PassThruStatus         =0x9E
 USFS_PassThruControl        =0xA0
 USFS_ACC_LPF_BW             =0x5B
 USFS_GYRO_LPF_BW            =0x5C
-USFS_BARO_LPF_BW            =0x5D
+USFS_MAG_LPF_BW             =0x5D
+USFS_BARO_LPF_BW            =0x5E
 USFS_GP8                    =0x3F
 USFS_GP9                    =0x40
 USFS_GP10                   =0x41
@@ -350,6 +361,8 @@ class USFS(object):
         # set sensor low-pass filter bandwidth. MUST BE DONE BEFORE SETTING ODR RATES!
         self.writeRegister(USFS_ACC_LPF_BW, LSM6DSM_ACC_DLPF_CFG)
         self.writeRegister(USFS_GYRO_LPF_BW, LSM6DSM_GYRO_DLPF_CFG)
+        self.writeRegister(USFS_MAG_LPF_BW, LIS2MDL_MAG_DLPF_ODR_CFG)
+        self.writeRegister(USFS_BARO_LPF_BW, LPS22HB_BARO_DLPF_ODR_CFG)
 
         # set accel/gyro/mag to desired ODR rates
         self.writeRegister(USFS_AccelRate, ACC_ODR)
