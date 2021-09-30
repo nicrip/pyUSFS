@@ -176,6 +176,8 @@ def initBus(bus_num):
 
 # write a byte to an open i2c bus
 def writeByteToBus(bus, address, offset, data_byte):
+    if(type(data_byte) == np.ndarray):
+        data_byte = data_byte[0]
     bus.write_byte_data(address, offset, data_byte)
 
 # read 'count' bytes from an open i2c bus
