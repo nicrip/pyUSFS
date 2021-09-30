@@ -376,8 +376,7 @@ class USFS(object):
         self.writeRegister(USFS_BaroRate, (0x80 + BARO_ODR))
 
         # configure operating mode
-        # output scaled sensor data (quaternion convention NED)
-        self.writeRegister(USFS_AlgorithmControl, 0x00)
+        self.start_sentral()
 
         # enable interrupt to host upon certain events
         # choose interrupts when: gyros updated (0x20), sentral error (0x02), or sentral reset (0x01)
@@ -386,7 +385,7 @@ class USFS(object):
         print('Done. Starting the Sentral...')
 
         # start the sentral
-        self.writeRegister(USFS_AlgorithmControl, 0x00)
+        self.start_sentral()
 
         print('Done. Loading algorithm tuning parameters...')
 
@@ -409,6 +408,10 @@ class USFS(object):
 
         print('Sentral initialization complete!')
         print('')
+
+    def start_sentral(self):
+        # start the sentral to output scaled sensor data and quaternion convention ENU
+        self.writeRegister(USFS_AlgorithmControl, 0x20)
 
     def run(self):
         self.start_runtime = time.time()
@@ -552,7 +555,7 @@ class USFS(object):
 
         self.writeRegister(USFS_ParamRequest, 0x00)
         time.sleep(0.1)
-        self.writeRegister(USFS_AlgorithmControl, 0x00)
+        self.start_sentral()
         time.sleep(0.1)
 
     def setWSParameters(self):
@@ -578,7 +581,7 @@ class USFS(object):
             while (not stat==param):
                 stat = self.readRegister(USFS_ParamAcknowledge)
         self.writeRegister(USFS_ParamRequest, 0x00)
-        self.writeRegister(USFS_AlgorithmControl, 0x00)
+        self.start_sentral()
 
     def computeIMU(self):
         # pass-through for future experimentation
@@ -704,7 +707,7 @@ class USFS(object):
             STAT = self.readRegister(USFS_ParamAcknowledge)
 
         self.writeRegister(USFS_ParamRequest, 0x00) #Parameter request = 0 to end parameter transfer process
-        self.writeRegister(USFS_AlgorithmControl, 0x00) # Re-start algorithm
+        self.start_sentral()
 
     def setMagAccFs(self, mag_fs, acc_fs):
         bites = [mag_fs & (0xFF), (mag_fs >> 8) & (0xFF),acc_fs & (0xFF), (acc_fs >> 8) & (0xFF)]
@@ -719,7 +722,7 @@ class USFS(object):
             STAT = self.readRegister(USFS_ParamAcknowledge)
 
         self.writeRegister(USFS_ParamRequest, 0x00) #Parameter request = 0 to end parameter transfer process
-        self.writeRegister(USFS_AlgorithmControl, 0x00) # Re-start algorithm
+        self.start_sentral()
 
     def setIntegerParam(self, param, param_val):
         bites = [param_val & (0xFF),(param_val >> 8) & (0xFF),(param_val >> 16) & (0xFF),(param_val >> 24) & (0xFF)]
@@ -734,7 +737,7 @@ class USFS(object):
         while (not(STAT==param)):
           STAT = self.readRegister(USFS_ParamAcknowledge)
         self.writeRegister(USFS_ParamRequest, 0x00) #Parameter request = 0 to end parameter transfer process
-        self.writeRegister(USFS_AlgorithmControl, 0x00) # Re-start algorithm
+        self.start_sentral()
 
     def setFloatParam(self, param, param_val):
         bites = self.floatToBytes(param_val)
@@ -749,7 +752,7 @@ class USFS(object):
         while (not(STAT==param)):
           STAT = self.readRegister(USFS_ParamAcknowledge)
         self.writeRegister(USFS_ParamRequest, 0x00) #Parameter request = 0 to end parameter transfer process
-        self.writeRegister(USFS_AlgorithmControl, 0x00) # Re-start algorithm
+        self.start_sentral()
 
     def floatToBytes(self, param_val):
         val = '{:08x}'.format(struct.unpack('<I',struct.pack('<f', param_val))[0])
@@ -927,7 +930,7 @@ class USFS(object):
             time.sleep(0.005)
 
         # restart algorithm
-        self.writeRegister(USFS_AlgorithmControl, 0x00)
+        self.start_sentral()
         time.sleep(0.1)
         stat = self.readRegister(USFS_AlgorithmStatus)
         while (stat & 0x01):
