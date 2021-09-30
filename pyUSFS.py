@@ -196,6 +196,8 @@ def initBus(bus_num):
 
 # write a byte to an open i2c bus
 def writeByteToBus(bus, address, offset, data_byte):
+    if(type(data_byte) == np.ndarray):
+        data_byte = data_byte[0]
     bus.write_byte_data(address, offset, data_byte)
 
 # read 'count' bytes from an open i2c bus
@@ -768,8 +770,8 @@ class USFS(object):
             cal_num = int(big_cal_num)
             cal_num_byte[0] = cal_num & 0xff
             cal_num_byte[1] = cal_num >> 8
-        self.writeRegister(USFS_GP36, cal_num_byte[0])
-        self.writeRegister(USFS_GP37, cal_num_byte[1])
+        self.writeRegister(USFS_GP36, cal_num_byte[0][0])
+        self.writeRegister(USFS_GP37, cal_num_byte[1][0])
 
         if (not ACCEL_CAL or not self.accel_cal_valid):
             cal_num_byte[0] = 0
@@ -946,5 +948,5 @@ class USFS(object):
         self.USFS.write_i2c_block_data(EEPROM_DATA_ADDRESS, 0x80, data)
 
 if __name__ == "__main__":
-    usfs = USFS(2, calibrate=True)
+    usfs = USFS(1, calibrate=True)
     usfs.run()
