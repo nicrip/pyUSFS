@@ -19,7 +19,7 @@ LSM6DSM_GYRO_LPF_167        =0x00
 LSM6DSM_GYRO_LPF_223        =0x01
 LSM6DSM_GYRO_LPF_314        =0x02
 LSM6DSM_GYRO_LPF_655        =0x03
-LSM6DSM_GYRO_DLPF_CFG       =LSM6DSM_GYRO_LPF_167
+LSM6DSM_GYRO_DLPF_CFG       =LSM6DSM_GYRO_LPF_655
 LSM6DSM_ACC_LPF_ODR_DIV2    =0x00
 LSM6DSM_ACC_LPF_ODR_DIV4    =0x01
 LSM6DSM_ACC_LPF_ODR_DIV9    =0x02
@@ -30,7 +30,7 @@ LSM6DSM_ACC_DLPF_CFG        =LSM6DSM_ACC_LPF_ODR_DIV400
 # LIS2MDL
 LIS2MDL_MAG_LPF_ODR_DIV2    =0x00
 LIS2MDL_MAG_LPF_ODR_DIV4    =0x01
-LIS2MDL_MAG_DLPF_ODR_CFG    =LIS2MDL_MAG_LPF_ODR_DIV4
+LIS2MDL_MAG_DLPF_ODR_CFG    =LIS2MDL_MAG_LPF_ODR_DIV2
 # LPS22HB
 LPS22HB_BARO_LPF_ODR_DIV2   =0x00
 LPS22HB_BARO_LPF_ODR_DIV9   =0x01
@@ -54,7 +54,7 @@ GYRO_ODR_104HZ              =0x0A
 GYRO_ODR_52HZ               =0x05
 GYRO_ODR_26HZ               =0x02
 GYRO_ODR_12HZ               =0x01
-GYRO_ODR                    =GYRO_ODR_834HZ
+GYRO_ODR                    =GYRO_ODR_208HZ
 MAG_ODR_100HZ               =0x64
 MAG_ODR_50HZ                =0x32
 MAG_ODR_20HZ                =0x14
@@ -84,7 +84,7 @@ GYRO_SCALE_250DPS           =0xFA
 GYRO_SCALE_500DPS           =0x1F4
 GYRO_SCALE_1000DPS          =0x3E8
 GYRO_SCALE_2000DPS          =0x7D0
-GYRO_SCALE                  =GYRO_SCALE_2000DPS
+GYRO_SCALE                  =GYRO_SCALE_125DPS
 MAG_SCALE_4915UT            =0x133
 MAG_SCALE                   =MAG_SCALE_4915UT
 DPS_PER_COUNT               =0.1525878906
@@ -785,8 +785,8 @@ class USFS(object):
             cal_num = int(big_cal_num)
             cal_num_byte[0] = cal_num & 0xff
             cal_num_byte[1] = cal_num >> 8
-        self.writeRegister(USFS_GP38, cal_num_byte[0])
-        self.writeRegister(USFS_GP39, cal_num_byte[1])
+        self.writeRegister(USFS_GP38, cal_num_byte[0][0])
+        self.writeRegister(USFS_GP39, cal_num_byte[1][0])
 
         if (not ACCEL_CAL or not self.accel_cal_valid):
             cal_num_byte[0] = 0
@@ -797,8 +797,8 @@ class USFS(object):
             cal_num = int(big_cal_num)
             cal_num_byte[0] = cal_num & 0xff
             cal_num_byte[1] = cal_num >> 8
-        self.writeRegister(USFS_GP40, cal_num_byte[0])
-        self.writeRegister(USFS_GP50, cal_num_byte[1])
+        self.writeRegister(USFS_GP40, cal_num_byte[0][0])
+        self.writeRegister(USFS_GP50, cal_num_byte[1][0])
 
         if (not ACCEL_CAL or not self.accel_cal_valid):
             cal_num_byte[0] = 0
@@ -809,8 +809,8 @@ class USFS(object):
             cal_num = int(big_cal_num)
             cal_num_byte[0] = cal_num & 0xff
             cal_num_byte[1] = cal_num >> 8
-        self.writeRegister(USFS_GP51, cal_num_byte[0])
-        self.writeRegister(USFS_GP52, cal_num_byte[1])
+        self.writeRegister(USFS_GP51, cal_num_byte[0][0])
+        self.writeRegister(USFS_GP52, cal_num_byte[1][0])
 
         if (not ACCEL_CAL or not self.accel_cal_valid):
             cal_num_byte[0] = 0
@@ -821,8 +821,8 @@ class USFS(object):
             cal_num = int(big_cal_num)
             cal_num_byte[0] = cal_num & 0xff
             cal_num_byte[1] = cal_num >> 8
-        self.writeRegister(USFS_GP53, cal_num_byte[0])
-        self.writeRegister(USFS_GP54, cal_num_byte[1])
+        self.writeRegister(USFS_GP53, cal_num_byte[0][0])
+        self.writeRegister(USFS_GP54, cal_num_byte[1][0])
 
         if (not ACCEL_CAL or not self.accel_cal_valid):
             cal_num_byte[0] = 0
@@ -833,8 +833,8 @@ class USFS(object):
             cal_num = int(big_cal_num)
             cal_num_byte[0] = cal_num & 0xff
             cal_num_byte[1] = cal_num >> 8
-        self.writeRegister(USFS_GP55, cal_num_byte[0])
-        self.writeRegister(USFS_GP56, cal_num_byte[1])
+        self.writeRegister(USFS_GP55, cal_num_byte[0][0])
+        self.writeRegister(USFS_GP56, cal_num_byte[1][0])
 
     def readAccelCal(self):
         #self.USFS.write_i2c_block_data(EEPROM_DATA_ADDRESS, 0x80, [0x8c, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
